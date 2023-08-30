@@ -1,32 +1,39 @@
-from flask import Flask, request
 from typing import Any
+
+from flask import Flask, request
+from pydantic import BaseModel, ValidationError
 
 app = Flask(__name__)
 
-Json = dict[int, Any]
+
+class Team(BaseModel):
+    uid: int | None
+    name: str
+    description: str
+
 
 class Storage:
     def __init__(self):
-        self.teams: dict[int, Json] = {}
+        self.teams: dict[int, Team] = {}
         self.last_uid = 0
 
 
-    def add(self, team: Json) -> Json:
+    def add(self, team: Team) -> Team:
         self.last_uid += 1
-        team['uid'] = self.last_uid
+        team.uid = self.last_uid
         self.teams[self.last_uid] = team
         return team
 
 
-    def get_all(self) -> list[Json]:
+    def get_all(self) -> list[Team]:
         return list(self.teams.values())
 
 
-    def get_by_id(self, uid: int) -> Json:
+    def get_by_id(self, uid: int) -> Team:
         return self.teams[uid]
 
 
-    def update(self, team: Json, uid: int) -> Json:
+    def update(self, team: Team, uid: int) -> Team:
         self.teams[uid] = team
         return team
 
@@ -39,24 +46,36 @@ storage = Storage()
 
 @app.post('/api/teams/')
 def add():
-    team = request.json
-    return storage.add(team), 201
+    payload = request.json
+    try:
+        team = Team(**payload)
+    except ValidationError as err:
+        return {'error': str(err)}, 400
+    team =  storage.add(team)
+    return team.dict(), 201
 
 
 @app.get('/api/teams/')
 def get_all():
-    return storage.get_all(), 200
+    teams = storage.get_all()
+    return [team.dict() for team in teams], 200
 
 
 @app.get('/api/teams/<int:uid>')
 def get_by_id(uid):
-    return storage.get_by_id(uid), 200
+    team = storage.get_by_id(uid)
+    return team.dict(), 200
 
 
 @app.put('/api/teams/<int:uid>')
 def update(uid):
-    team = request.json
-    return storage.update(team, uid), 200
+    payload = request.json
+    try:
+        team = Team(**payload)
+    except ValidationError as err:
+        return {'error': str(err)}, 400
+    team = storage.update(team, uid)
+    return team.dict(), 200
 
 
 @app.delete('/api/teams/<int:uid>')
