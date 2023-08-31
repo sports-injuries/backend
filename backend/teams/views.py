@@ -1,18 +1,18 @@
 from typing import Any
 
-from flask import Flask, request
+from flask import Blueprint, request
 
 from backend.teams.errors import AppError
 from backend.teams.schemas import Team
 from backend.teams.storage import Storage
 
-app = Flask(__name__)
+team_view = Blueprint('teams', __name__)
 
 
 storage = Storage()
 
 
-@app.post('/api/teams/')
+@team_view.post('/')
 def add() -> tuple[dict[str, Any], int]:
     payload = request.json
     if not payload:
@@ -24,19 +24,19 @@ def add() -> tuple[dict[str, Any], int]:
     return team.dict(), 201
 
 
-@app.get('/api/teams/')
+@team_view.get('/')
 def get_all():
     teams = storage.get_all()
     return [team.dict() for team in teams], 200
 
 
-@app.get('/api/teams/<int:uid>')
+@team_view.get('/<int:uid>')
 def get_by_id(uid):
     team = storage.get_by_id(uid)
     return team.dict(), 200
 
 
-@app.put('/api/teams/<int:uid>')
+@team_view.put('/<int:uid>')
 def update(uid):
     payload = request.json
     if not payload:
@@ -47,7 +47,7 @@ def update(uid):
     return team.dict(), 200
 
 
-@app.delete('/api/teams/<int:uid>')
+@team_view.delete('/<int:uid>')
 def delete(uid):
     storage.delete(uid)
     return {}, 204
