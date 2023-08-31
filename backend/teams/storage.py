@@ -5,7 +5,7 @@ from db import db_session
 
 
 class Storage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.teams: dict[int, TeamSchemas] = {}
         self.last_uid = 0
 
