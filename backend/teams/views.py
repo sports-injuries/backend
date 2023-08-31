@@ -1,10 +1,10 @@
-from flask import Flask, request
-from pydantic import ValidationError
-from backend.teams.schemas import Team
-from backend.teams.storage import Storage
-from backend.teams.errors import AppError
 from typing import Any
 
+from flask import Flask, request
+
+from backend.teams.errors import AppError
+from backend.teams.schemas import Team
+from backend.teams.storage import Storage
 
 app = Flask(__name__)
 
@@ -20,7 +20,7 @@ def add() -> tuple[dict[str, Any], int]:
 
     payload['uid'] = -1
     team = Team(**payload)
-    team =  storage.add(team)
+    team = storage.add(team)
     return team.dict(), 201
 
 
