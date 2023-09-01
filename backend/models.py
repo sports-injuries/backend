@@ -19,5 +19,13 @@ class Player(Base):
     description = Column(String)
 
 
+class Injury(Base):
+    __tablename__ = 'injuries'
+
+    uid = Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+
+
 if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
