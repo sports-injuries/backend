@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 from backend.db import Base, engine
 
@@ -17,6 +17,7 @@ class Player(Base):
     uid = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(String)
+    team_uid = Column(Integer, ForeignKey('teams.uid'))
 
 
 class Injury(Base):
