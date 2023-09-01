@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from backend.db import Base, engine
 
@@ -9,6 +10,8 @@ class Team(Base):
     uid = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(String)
+
+    players = relationship('Player')
 
 
 class Player(Base):
