@@ -2,7 +2,7 @@ from typing import Any
 
 from flask import Blueprint, request
 
-from backend.teams.errors import AppError
+from backend.errors import AppError
 from backend.teams.schema import TeamSchema
 from backend.teams.storage import Storage
 
@@ -48,7 +48,7 @@ def update(uid: int) -> tuple[Team, int]:
     return team.dict(), 200
 
 
-@team_view.delete('/<int:uid>')
-def delete(uid):
+@team_view.delete('/<int:uid>')  # type: ignore
+def delete(uid: int) -> tuple[dict[None, None], int]:
     storage.delete(uid)
     return {}, 204

@@ -7,8 +7,10 @@ from backend.teams.schema import TeamSchema
 class Storage:
     def add(self, team: TeamSchema) -> TeamSchema:
         entity = Team(name=team.name, description=team.description)
+
         db_session.add(entity)
         db_session.commit()
+
         return TeamSchema(uid=entity.uid, name=entity.name, description=entity.description)
 
     def get_all(self) -> list[TeamSchema]:
