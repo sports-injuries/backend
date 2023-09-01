@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String
-from db import Base, engine
+
+from backend.db import Base, engine
+
 
 class Team(Base):
     __tablename__ = 'teams'
@@ -9,5 +11,5 @@ class Team(Base):
     description = Column(String)
 
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
