@@ -4,7 +4,8 @@ from flask import Flask
 from pydantic import ValidationError
 
 from backend.db import db_session
-from backend.teams.errors import AppError
+from backend.errors import AppError
+from backend.players.views import player_view
 from backend.teams.views import team_view
 
 app = Flask(__name__)
@@ -29,6 +30,7 @@ app.register_error_handler(AppError, handle_app_error)
 app.register_error_handler(ValidationError, handle_validation_error)
 
 app.register_blueprint(team_view, url_prefix='/api/v1/teams')
+app.register_blueprint(player_view, url_prefix='/api/v1/players')
 
 app.teardown_appcontext(shutdown_session)
 
