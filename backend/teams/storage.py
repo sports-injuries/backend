@@ -1,6 +1,6 @@
 from backend.db import db_session
+from backend.errors import NotFoundError
 from backend.models import Team
-from backend.teams.errors import NotFoundError
 from backend.teams.schema import TeamSchema
 
 
