@@ -8,7 +8,7 @@ class Team(Base):
     __tablename__ = 'teams'
 
     uid = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     description = Column(String)
 
     players = relationship('Player')
@@ -18,9 +18,9 @@ class Player(Base):
     __tablename__ = 'players'
 
     uid = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     description = Column(String)
-    team_uid = Column(Integer, ForeignKey('teams.uid'))
+    team_id = Column(Integer, ForeignKey('teams.uid'), nullable=False)
 
 
 class Injury(Base):
