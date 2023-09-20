@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.db import db_session
 from backend.errors import ConflictError, NotFoundError
-from backend.models import Player
+from backend.models import Player, Team
 from backend.players.schema import PlayerSchema
 
 
@@ -75,3 +75,20 @@ class Storage():
 
         db_session.delete(entity)
         db_session.commit()
+
+    def get_for_team(self, uid: int) -> list[PlayerSchema]:
+        team = Team.query.get(uid)
+
+        if not team:
+            raise NotFoundError('team', uid)
+
+        entities = team.players
+
+        return [
+            PlayerSchema(
+                uid=entity.uid,
+                name=entity.name,
+                description=entity.description,
+                team_id=entity.team_id,
+            ) for entity in entities
+        ]
