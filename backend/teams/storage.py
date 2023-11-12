@@ -28,6 +28,17 @@ class Storage:
 
         return TeamSchema(uid=entity.uid, name=entity.name, description=entity.description)
 
+    def get_by_name(self, name: str) -> TeamSchema:
+        search = '%{name}%'.format(name=name)
+        entities = Team.query.filter(
+            Team.name.ilike(search),
+        ).all()
+
+        return [
+            TeamSchema(uid=entity.uid, name=entity.name, description=entity.description)
+            for entity in entities
+        ]
+
     def update(self, team: TeamSchema, uid: int) -> TeamSchema:
         entity = Team.query.get(uid)
 
