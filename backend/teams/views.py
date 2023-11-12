@@ -29,8 +29,13 @@ def add() -> tuple[Team, int]:
 
 
 @team_view.get('/')
-def get_all_teams() -> tuple[list[Team], int]:
-    teams = team_storage.get_all()
+def get() -> tuple[list[Team], int]:
+    name = request.args.get('name')
+    if name:
+        teams = team_storage.get_by_name(name)
+    else:
+        teams = team_storage.get_all()
+
     return [team.dict() for team in teams], 200
 
 
@@ -55,9 +60,3 @@ def update(uid: int) -> tuple[Team, int]:
 def delete(uid: int) -> tuple[dict[None, None], int]:
     team_storage.delete(uid)
     return {}, 204
-
-
-@team_view.get('/<int:uid>/players/')
-def get_for_team(uid: int) -> tuple[list[Player], int]:
-    players = player_storage.get_for_team(uid)
-    return [player.dict() for player in players], 200
