@@ -28,7 +28,7 @@ class Storage:
 
         return TeamSchema(uid=entity.uid, name=entity.name, description=entity.description)
 
-    def get_by_name(self, name: str) -> TeamSchema:
+    def get_by_name(self, name: str) -> list[TeamSchema]:
         search = '%{name}%'.format(name=name)
         entities = Team.query.filter(
             Team.name.ilike(search),
