@@ -3,10 +3,12 @@ from typing import Any
 from flask import Blueprint, request
 
 from backend.errors import AppError
+from backend.injuries.views import injury_view
 from backend.players.schema import PlayerSchema
 from backend.players.storage import Storage
 
 player_view = Blueprint('players', __name__)
+player_view.register_blueprint(injury_view, url_prefix='')
 
 storage = Storage()
 
