@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from backend.db import Base, engine
@@ -20,15 +20,21 @@ class Player(Base):
     uid = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String)
+
     team_id = Column(Integer, ForeignKey('teams.uid'), nullable=False)
+    injuries = relationship('Injury')
 
 
 class Injury(Base):
     __tablename__ = 'injuries'
 
     uid = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     description = Column(String)
+    start_date = Column(DateTime(timezone=True))
+    end_date = Column(DateTime(timezone=True))
+
+    player_id = Column(Integer, ForeignKey('players.uid'), nullable=False)
 
 
 if __name__ == '__main__':
