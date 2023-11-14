@@ -27,8 +27,9 @@ def add(player_id: int) -> tuple[dict[str, Any], int]:
         injury.end_date,
         player_id,
     )
+    injury = InjurySchema.from_orm(entity)
 
-    return entity.dict(), 201
+    return injury.dict(), 201
 
 
 @injury_view.get('/')
