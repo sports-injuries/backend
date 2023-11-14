@@ -1,17 +1,39 @@
+from datetime import datetime
+
+from sqlalchemy.exc import IntegrityError
+
 from backend.db import db_session
-from backend.errors import NotFoundError
+from backend.errors import ConflictError, NotFoundError
 from backend.injuries.schema import InjurySchema
 from backend.models import Injury
 
 
 class Storage:
-    def add(self, injury: InjurySchema) -> InjurySchema:
-        entity = Injury(name=injury.name, description=injury.description)
+    name = 'injuries'
 
-        db_session.add(entity)
-        db_session.commit()
+    def add(
+        self,
+        name: str,
+        description: str | None,
+        start_date: datetime,
+        end_date: datetime | None,
+        player_id: int,
+    ) -> Injury:
+        entity = Injury(
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            player_id=player_id,
+        )
 
-        return InjurySchema(uid=entity.uid, name=entity.name, description=entity.description)
+        try:
+            db_session.add(entity)
+            db_session.commit()
+        except IntegrityError:
+            raise ConflictError(self.name)
+
+        return entity
 
     def get_all(self) -> list[InjurySchema]:
         entities = Injury.query.all()
