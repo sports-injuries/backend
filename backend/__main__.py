@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from backend.db import db_session
 from backend.errors import AppError
-from backend.injuries.views import injury_view
 from backend.players.views import player_view
 from backend.teams.views import team_view
 
@@ -32,7 +31,6 @@ app.register_error_handler(ValidationError, handle_validation_error)
 
 app.register_blueprint(team_view, url_prefix='/api/v1/teams')
 app.register_blueprint(player_view, url_prefix='/api/v1/players')
-app.register_blueprint(injury_view, url_prefix='/api/v1/injuries')
 
 app.teardown_appcontext(shutdown_session)
 
