@@ -4,8 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.db import db_session
 from backend.errors import ConflictError, NotFoundError
-from backend.injuries.schema import InjurySchema
-from backend.models import Injury
+from backend.models import Injury, Player
 
 
 class Storage:
@@ -35,33 +34,13 @@ class Storage:
 
         return entity
 
-    def get_all(self) -> list[InjurySchema]:
-        entities = Injury.query.all()
-        return [
-            InjurySchema(uid=entity.uid, name=entity.name, description=entity.description)
-            for entity in entities
-        ]
+    def get_for_player(self, player_id: int) -> list[Injury]:
+        player = Player.query.get(player_id)
 
-    def get_by_id(self, uid: int) -> InjurySchema:
-        entity = Injury.query.get(uid)
+        if not player:
+            raise NotFoundError('injury', player_id)
 
-        if not entity:
-            raise NotFoundError('injury', uid)
-
-        return InjurySchema(uid=entity.uid, name=entity.name, description=entity.description)
-
-    def update(self, injury: InjurySchema, uid: int) -> InjurySchema:
-        entity = Injury.query.get(uid)
-
-        if not entity:
-            raise NotFoundError('injury', uid)
-
-        entity.name = injury.name
-        entity.description = injury.description
-
-        db_session.commit()
-
-        return InjurySchema(uid=entity.uid, name=entity.name, description=entity.description)
+        return player.injuries
 
     def delete(self, uid: int) -> None:
         entity = Injury.query.get(uid)
