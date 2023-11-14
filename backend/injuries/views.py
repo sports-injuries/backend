@@ -32,32 +32,15 @@ def add(player_id: int) -> tuple[dict[str, Any], int]:
     return injury.dict(), 201
 
 
-@injury_view.get('/')
-def get_all() -> tuple[list[dict[str, Any]], int]:
-    injuries = storage.get_all()
+@injury_view.get('/<int:player_id>/injuries/')
+def get_for_player(player_id: int) -> tuple[list[dict[str, Any]], int]:
+    entities = storage.get_for_player(player_id)
+    injuries = [InjurySchema.from_orm(entity) for entity in entities]
+
     return [injury.dict() for injury in injuries], 200
 
 
-@injury_view.get('/<int:uid>')
-def get_by_id(uid: int) -> tuple[dict[str, Any], int]:
-    injury = storage.get_by_id(uid)
-    return injury.dict(), 200
-
-
-@injury_view.put('/<int:uid>')
-def update(uid: int) -> tuple[dict[str, Any], int]:
-    payload = request.json
-
-    if not payload:
-        raise AppError('empty payload')
-
-    injury = InjurySchema(**payload)
-    injury = storage.update(injury, uid)
-
-    return injury.dict(), 200
-
-
-@injury_view.delete('/<int:uid>')  # type: ignore
-def delete(uid: int) -> tuple[dict[None, None], int]:
+@injury_view.delete('/<int:player_id>/injuries/<int:uid>')  # type: ignore
+def delete(player_id: int, uid: int) -> tuple[dict[None, None], int]:
     storage.delete(uid)
     return {}, 204
