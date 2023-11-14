@@ -11,8 +11,8 @@ injury_view = Blueprint('injuries', __name__)
 storage = Storage()
 
 
-@injury_view.post('/')
-def add() -> tuple[dict[str, Any], int]:
+@injury_view.post('/<int:player_id>/injuries/')
+def add(player_id: int) -> tuple[dict[str, Any], int]:
     payload = request.json
 
     if not payload:
@@ -20,9 +20,15 @@ def add() -> tuple[dict[str, Any], int]:
 
     payload['uid'] = -1
     injury = InjurySchema(**payload)
-    injury = storage.add(injury)
+    entity = storage.add(
+        injury.name,
+        injury.description,
+        injury.start_date,
+        injury.end_date,
+        player_id,
+    )
 
-    return injury.dict(), 201
+    return entity.dict(), 201
 
 
 @injury_view.get('/')
