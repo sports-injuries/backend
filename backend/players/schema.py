@@ -6,3 +6,6 @@ class PlayerSchema(BaseModel):
     name: str
     description: str
     team_id: int
+
+    class Config:
+        orm_mode = True
