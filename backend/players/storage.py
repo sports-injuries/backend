@@ -25,16 +25,8 @@ class Storage():
             team_id=entity.team_id,
         )
 
-    def get_all(self) -> list[PlayerSchema]:
-        entities = Player.query.all()
-        return [
-            PlayerSchema(
-                uid=entity.uid,
-                name=entity.name,
-                description=entity.description,
-                team_id=entity.team_id,
-            ) for entity in entities
-        ]
+    def get_all(self) -> list[Player]:
+        return Player.query.all()
 
     def get_by_id(self, uid: int) -> PlayerSchema:
         entity = Player.query.get(uid)
@@ -76,19 +68,22 @@ class Storage():
         db_session.delete(entity)
         db_session.commit()
 
-    def get_for_team(self, uid: int) -> list[PlayerSchema]:
+    def get_for_team(self, uid: int) -> list[Player]:
         team = Team.query.get(uid)
 
         if not team:
             raise NotFoundError('team', uid)
 
-        entities = team.players
+        return team.players
 
-        return [
-            PlayerSchema(
-                uid=entity.uid,
-                name=entity.name,
-                description=entity.description,
-                team_id=entity.team_id,
-            ) for entity in entities
-        ]
+    def find_by_name(self, player: str) -> list[Player]:
+        search = '{player}%'.format(player=player)
+        entity = Player.query.filter(Player.name.ilike(search)).all()
+
+        if not entity:
+            raise NotFoundError(self.name, player)
+
+        return entity
+
+
+
