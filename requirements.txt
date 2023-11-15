@@ -6,3 +6,4 @@ mypy==1.5.1
 wemake-python-styleguide==0.18.0
 pre-commit==3.3.3
 Werkzeug==2.2.2
+orjson==3.8.1
