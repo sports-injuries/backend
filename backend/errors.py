@@ -9,10 +9,10 @@ class AppError(Exception):
 class NotFoundError(AppError):
     code = 404
 
-    def __init__(self, resource: str, uid: int) -> None:
-        super().__init__(f'{resource} [{uid}] not found')
+    def __init__(self, resource: str, field: int | str) -> None:
+        super().__init__(f'{resource} [{field}] not found')
         self.name = resource
-        self.uid = uid
+        self.field = field
 
 
 class ConflictError(AppError):

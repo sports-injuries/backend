@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Any
 
 from flask import Blueprint, request
@@ -24,19 +25,26 @@ def add() -> tuple[dict[str, Any], int]:
     player = PlayerSchema(**payload)
     player = storage.add(player)
 
-    return player.dict(), 201
+    return player.dict(), HTTPStatus.CREATED
 
 
 @player_view.get('/')
-def get_all() -> tuple[list[dict[str, Any]], int]:
-    players = storage.get_all()
-    return [player.dict() for player in players], 200
+def get() -> tuple[list[dict[str, Any]], int]:
+    player = request.args.get('name')
+    if player:
+        entities = storage.find_by_name(player)
+        players = [PlayerSchema.from_orm(entity) for entity in entities]
+    else:
+        entities = storage.get_all()
+        players = [PlayerSchema.from_orm(entity) for entity in entities]
+
+    return [player.dict() for player in players], HTTPStatus.OK
 
 
 @player_view.get('/<int:uid>')
 def get_by_id(uid: int) -> tuple[dict[str, Any], int]:
     player = storage.get_by_id(uid)
-    return player.dict(), 200
+    return player.dict(), HTTPStatus.OK
 
 
 @player_view.put('/<int:uid>')
